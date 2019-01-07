@@ -2,15 +2,15 @@ google:
   accessTokenEndpoint: https://www.googleapis.com/oauth2/v4/token
   userProfileEndpoint: https://www.googleapis.com/oauth2/v2/userinfo
   grantType: authorization_code
-  clientId: 566722109821-accbnvslqf8st1si4hocn3j9sfkvv8n0.apps.googleusercontent.com
-  clientSecret: DuhL91SZ-gj9xxzeYtNjgCuh
+  clientId: [ id de cliente google ]
+  clientSecret: [ secret de cliente google ]
   fields: email,name,family_name,given_name,id,verified_email
 
 facebook:
   accessTokenEndpoint: https://graph.facebook.com/v3.2/oauth/access_token
   userProfileEndpoint: https://graph.facebook.com/v3.2/me
   grantType: fb_exchange_token
-  clientId: 327343551154735
-  clientSecret: 5f0061ee51650d0ccf2a997077897836
+  clientId: [ id de cliente facebook ]
+  clientSecret: [ secret de cliente facebook ]
   fields: id,name,email,first_name,last_name
   
