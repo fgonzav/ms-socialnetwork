@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Social network login</title>
+
+    <script
+            src="https://code.jquery.com/jquery-3.2.1.min.js"
+            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+            crossorigin="anonymous"></script>
+
+</head>
+<body>
+    <script type="text/javascript">
+    $(document).ready(function(){
+	    var getParameter = function(name){
+	        let searchParams = new URLSearchParams(window.location.search);
+	        if(searchParams.has(name))
+	            return searchParams.get(name);
+	        else
+	            return null;
+	    }
+	    
+	    var googleLogin = {
+            'client_id': '566722109821-accbnvslqf8st1si4hocn3j9sfkvv8n0.apps.googleusercontent.com',
+            'response_type': 'code',
+            'scope': 'openid email profile',
+            'redirect_uri': 'http://localhost:8090/index.html'
+        }
+	    
+	    var facebookLogin = {
+	    	'client_id': '2192002814346297',
+	    	'redirect_uri': 'http://localhost:8090/index.html',
+	    	'state': '1234asdsf',
+	    	'scope': 'email'
+	    }
+	    
+	    var code = getParameter("code");
+	    var state = getParameter("state");
+	    if(code != null){
+	    	var sn;
+	    	var redirectUri;
+	    	if(state != null && state == facebookLogin.state){
+	    		sn = 'facebook';
+	    		redirectUri = facebookLogin.redirect_uri
+	    	}
+	    	else{
+		    	sn = 'google';
+		    	redirectUri = googleLogin.redirect_uri
+	    	}
+	    	
+	    	$.ajax({
+                method: 'post',
+                url: '/social/'+sn+'/auth',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    "autorizationCode": code,
+                    "redirectUri": redirectUri
+                }),
+                success: function(res, status){
+                    let accessToken = JSON.parse(JSON.stringify(res)).access_token;
+                    console.log(accessToken);
+                    console.log(sn);
+                    
+                    $.ajax({
+                        method: 'get',
+                        url: '/social/'+sn+'/user',
+                        data: {
+                            "accessToken": accessToken
+                        },
+                        success: function(res, status){
+                            console.log(JSON.stringify(res))
+                            $('#'+sn+'UserInfo').text(JSON.stringify(JSON.parse(res), null, 2));
+                        },
+                        error: function(error, status){
+                            alert(error.status +', ' +error.responseText);
+                        }
+                    });
+                },
+                error: function(error, status, errorThrown){
+                    alert(error.status +', ' +error.responseText);
+                }
+            })
+	    }
+	    
+	    $('#google').attr('href', 'https://accounts.google.com/o/oauth2/v2/auth?'+$.param(googleLogin));
+	    $('#facebook').attr('href', 'https://www.facebook.com/v3.1/dialog/oauth?'+$.param(facebookLogin));
+    });
+    </script>
+    
+    <a id="google" href="#">Login Google</a>
+    <pre id="googleUserInfo"></pre>
+    <a id="facebook" href="#">Login Facebook</a>
+    <pre id="facebookUserInfo"></pre>
+</body>
+</html>
